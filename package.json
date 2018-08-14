@@ -1,0 +1,21 @@
+{
+  "name": "ramadan-cal-v2",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "cheerio-tableparser": "^1.0.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "moment-hijri": "^2.0.1",
+    "mongoose": "^4.9.5",
+    "morgan": "^1.9.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "underscore": "^1.8.3"
+  }
+}
