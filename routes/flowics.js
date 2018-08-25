@@ -66,6 +66,7 @@ router.post('/city/data', async (req, res) => {
 		if (err) { return res.status(500).json({ err: err }); }
 		if (city) {
 			let n = new Date().addHours(3).getDate();
+			n = process.env.ALTER_DAY === undefined ? n : (n + parseInt(process.env.ALTER_DAY));
 			let tod_data = _.findWhere(city.cal, {day: n.toString()});
 			let tom_data = _.findWhere(city.cal, {day: (n + 1).toString()});
 			calendar = {

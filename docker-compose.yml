@@ -7,6 +7,7 @@ services:
             - NODE_ENV=development
             - YEAR=1440
             - MONTH=9
+            - ALTER_DAY=0
         volumes:
             - .:/app
         working_dir: /app
