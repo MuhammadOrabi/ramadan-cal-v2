@@ -4,8 +4,7 @@ services:
     myapp:
         image: node
         environment:
-            - NODE_ENV=development
-            - FOO=bar
+            - NODE_ENV=prod
         volumes:
             - .:/app
         working_dir: /app

@@ -16,9 +16,11 @@ router.get('/', function(req, res, next) {
 
 router.get('/city', function(req, res, next) {
 	let locations = scrapper.locations;
+	let year = process.env.YEAR || 1439;
+	let month = process.env.MONTH || 12;
 	for (var i = 0; i < locations.length; i++) {
 		let location = locations[i];
-		scrapper.getPrayers(location.m, location.l, 1439, 12)
+		scrapper.getPrayers(location.m, location.l, year, month)
 		.then(d => {
 			City.findOneAndUpdate({ name: location.title }, { cal: d }, function (err, city) {
 				if (err) { return res.status(500).json({ err: err }); }
