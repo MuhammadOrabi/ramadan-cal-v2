@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+    myapp:
+        image: node
+        environment:
+            - NODE_ENV=development
+            - FOO=bar
+        volumes:
+            - .:/app
+        working_dir: /app
+        ports:
+            - 3000:3000
+        links:
+            - mongodb
+        depends_on:
+            - mongodb
+        command: npm start
+
+    mongodb:
+        image: mongo
+        environment:
+          - MONGO_DATA_DIR=/data/db
+          - MONGO_LOG_DIR=/dev/null
+        volumes:
+          - ./data/db:/data/db
+        ports:
+            - 27017:27017
+        command: mongod --smallfiles --logpath=/dev/null # --quiet

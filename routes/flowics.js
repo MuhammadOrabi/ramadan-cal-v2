@@ -1,70 +1,91 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const City = require('../models/city');
+const _ = require('underscore');
+
+
+let emptCal = {
+	"city": '',
+	"date": '',
+	"Fajr": '',
+	"Sunrise": '',
+	"Dhuhr": '',
+	"Asr": '',
+	"Sunset": '',
+	"Maghrib": '',
+	"Isha": '',
+	"Imsak": '',
+	"Midnight": '',
+	"date-tomorrow": '',
+	"Fajr-tomorrow": '',
+	"Sunrise-tomorrow": '',
+	"Dhuhr-tomorrow": '',
+	"Asr-tomorrow": '',
+	"Sunset-tomorrow": '',
+	"Maghrib-tomorrow": '',
+	"Isha-tomorrow": '',
+	"Imsak-tomorrow": '',
+	"Midnight-tomorrow": ''
+};
+
+
+function getCityName(hashtags) {
+	let name;
+	for (let i = 0; i < hashtags.length; i++) {
+		name = hashtags[i].hashtag;
+		if (name == 'مكة' || name == 'مكه' || name == 'مكة_المكرمة' || name == 'مكه_المكرمه') {
+			return name = 'مكة المكرمة';
+		} else if (name == 'جده') {
+			return name = 'جدة';
+		} else if (name == 'جيزان') {
+			return name = 'جازان';
+		} else if (name == 'ابها') {
+			return name = 'أبها';
+		} else if (name == 'الباحه') {
+			return name = 'الباحة';
+		} else if (name == 'المدينة' || name == 'المدينه' || name == 'المدينة_المنورة' || name == 'المدينه_المنوره') {
+			return name = 'المدينة المنورة';
+		}
+	}
+	return name;
+}
 
 // Get the Data for Flowics API
-router.post('/city/data', function (req, res, next) {
-	City.find({}, 'name', function (err, names) {
-		if (!names) { return res.json(); }
-		names = _.pluck(names, 'name');
-		var hash = req.body.mention.hashtags;
-		var name;
-		for (var i = 0; i < hash.length; i++) {
-			if (hash[i].hashtag) {
-				var tmp = hash[i].hashtag;
-				if (tmp === 'مكة' || tmp === 'مكه' || tmp === 'مكة_المكرمة' || tmp === 'مكه_المكرمه') {
-					tmp = 'مكة المكرمة';
-				} else if (tmp === 'جده') {
-					tmp = 'جدة';
-				} else if (tmp === 'جيزان') {
-					tmp = 'جازان';
-				} else if (tmp === 'ابها') {
-					tmp = 'أبها';
-				} else if (tmp === 'الباحه') {
-					tmp = 'الباحة';
-				} else if (tmp === 'المدينة' || tmp === 'المدينه' || tmp === 'المدينة_المنورة' || tmp === 'المدينه_المنوره') {
-					tmp = 'المدينة المنورة';
-				}
-				if (_.contains(names, tmp)) {
-					name = tmp;
-					break;
-				}
-			}
-		}
-
-		City.findOne({ 'name': name }, function (err, city) {
-			if (err) { return res.status(500).json({ err: err }); }
-			if (!city) { return res.status(422).json(); }
-
-			var d = new Date().addHours(3);
-			var n = d.getDate();
-			var tod_data = city.cal[n.toString()] || emptyCal;
-			var tom = n + 1;
-			var tom_data = city.cal[tom.toString()] || emptyCal;
-			var data = {
+router.post('/city/data', async (req, res) => {
+	let hashtags = req.body.mention.hashtags;
+	let name = await getCityName(hashtags);
+	let calendar = emptCal;
+	City.findOne({ 'name': name }, (err, city) => {
+		if (err) { return res.status(500).json({ err: err }); }
+		if (city) {
+			let n = new Date().getDate();
+			let tod_data = _.findWhere(city.cal, {day: n.toString()});
+			let tom_data = _.findWhere(city.cal, {day: (n + 1).toString()});
+			calendar = {
 				"city": city.name,
 				"date": tod_data.day,
-				"Fajr": tod_data.Fajr,
-				"Sunrise": tod_data.Sunrise,
-				"Dhuhr": tod_data.Dhuhr,
-				"Asr": tod_data.Asr,
-				"Sunset": tod_data.Sunset,
-				"Maghrib": tod_data.Maghrib,
-				"Isha": tod_data.Isha,
-				"Imsak": tod_data.Imsak,
-				"Midnight": tod_data.Midnight,
+				"Fajr": tod_data.fajr,
+				"Sunrise": tod_data.sunrise,
+				"Dhuhr": tod_data.dhuhr,
+				"Asr": tod_data.asr,
+				"Sunset": tod_data.sunset,
+				"Maghrib": tod_data.maghrib,
+				"Isha": tod_data.isha,
+				"Imsak": tod_data.imsak,
+				"Midnight": tod_data.midnight,
 				"date-tomorrow": tom_data.day,
-				"Fajr-tomorrow": tom_data.Fajr,
-				"Sunrise-tomorrow": tom_data.Sunrise,
-				"Dhuhr-tomorrow": tom_data.Dhuhr,
-				"Asr-tomorrow": tom_data.Asr,
-				"Sunset-tomorrow": tom_data.Sunset,
-				"Maghrib-tomorrow": tom_data.Maghrib,
-				"Isha-tomorrow": tom_data.Isha,
-				"Imsak-tomorrow": tom_data.Imsak,
+				"Fajr-tomorrow": tom_data.fajr,
+				"Sunrise-tomorrow": tom_data.sunrise,
+				"Dhuhr-tomorrow": tom_data.dhuhr,
+				"Asr-tomorrow": tom_data.asr,
+				"Sunset-tomorrow": tom_data.sunset,
+				"Maghrib-tomorrow": tom_data.maghrib,
+				"Isha-tomorrow": tom_data.isha,
+				"Imsak-tomorrow": tom_data.imsak,
 				"Midnight-tomorrow": tom_data.Midnight
 			};
-			res.json(data);
-		});
+		}
+		res.json(calendar);
 	});
 });
 

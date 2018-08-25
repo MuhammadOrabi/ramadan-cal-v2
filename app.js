@@ -6,7 +6,8 @@ var logger = require('morgan');
 var url;
 var env = process.env.NODE_ENV || 'development';
 if (env === 'development') {
-	url = 'mongodb://cal_admin:cal_admin@ds151018.mlab.com:51018/cal'
+	url = 'mongodb://mongodb:27017/cal';
+	// url = 'mongodb://cal_admin:cal_admin@ds151018.mlab.com:51018/cal';
 	// url = 'mongodb://heroku_1qlzlsfq:dc89r9rch7krv0vs2omujvgd9q@ds111791.mlab.com:11791/heroku_1qlzlsfq';
 } else {
 	url = 'mongodb://heroku_1qlzlsfq:dc89r9rch7krv0vs2omujvgd9q@ds111791.mlab.com:11791/heroku_1qlzlsfq';

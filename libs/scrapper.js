@@ -34,7 +34,7 @@ exports.getPrayers = function (m, l, year, month) {
 			let prayers = {};
 
 			prayers.hijry = data[0][j];
-			prayers.day = data[1][j];
+			prayers.day = data[1][j].match(/\d/g).join('');
 			prayers.fajr = data[2][j];
 			prayers.sunrise = data[3][j];
 			prayers.dhuhr = data[4][j];
