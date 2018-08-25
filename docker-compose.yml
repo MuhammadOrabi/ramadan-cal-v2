@@ -5,8 +5,8 @@ services:
         image: node
         environment:
             - NODE_ENV=development
-            - YEAR=1439
-            - MONTH=12
+            - YEAR=1440
+            - MONTH=9
         volumes:
             - .:/app
         working_dir: /app

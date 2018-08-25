@@ -34,13 +34,15 @@ exports.getPrayers = function (m, l, year, month) {
 			let prayers = {};
 
 			prayers.hijry = data[0][j];
-			prayers.day = data[1][j].match(/\d/g).join('');
+			prayers.day = data[1][j];
 			prayers.fajr = data[2][j];
 			prayers.sunrise = data[3][j];
 			prayers.dhuhr = data[4][j];
 			prayers.asr = data[5][j];
 			prayers.maghrib = data[6][j];
 			prayers.isha = data[7][j];
+
+			prayers.day = prayers.day ? prayers.day.replace(/[^0-9]/g, '') : prayers.day;
 
 			cal.push(prayers);
 		}

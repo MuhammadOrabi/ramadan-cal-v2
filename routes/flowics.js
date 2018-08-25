@@ -65,7 +65,7 @@ router.post('/city/data', async (req, res) => {
 	City.findOne({ 'name': name }, (err, city) => {
 		if (err) { return res.status(500).json({ err: err }); }
 		if (city) {
-			let n = new Date().getDate().addHours(3);
+			let n = new Date().addHours(3).getDate();
 			let tod_data = _.findWhere(city.cal, {day: n.toString()});
 			let tom_data = _.findWhere(city.cal, {day: (n + 1).toString()});
 			calendar = {
