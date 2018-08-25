@@ -9,6 +9,10 @@ Date.prototype.addHours = function (h) {
 	return this;
 }
 
+Date.prototype.addDays = function(days) {
+    this.setDate(this.getDate() + parseInt(days));
+    return this;
+};
 
 
 let emptCal = {
@@ -65,10 +69,12 @@ router.post('/city/data', async (req, res) => {
 	City.findOne({ 'name': name }, (err, city) => {
 		if (err) { return res.status(500).json({ err: err }); }
 		if (city) {
-			let n = new Date().addHours(3).getDate();
-			n = process.env.ALTER_DAY === undefined ? n : (n + parseInt(process.env.ALTER_DAY));
-			let tod_data = _.findWhere(city.cal, {day: n.toString()});
-			let tom_data = _.findWhere(city.cal, {day: (n + 1).toString()});
+			let days = process.env.ALTER_DAY === undefined ? 0 : parseInt(process.env.ALTER_DAY);
+			let today = new Date().addHours(3).addDays(days);
+			let tomorrow = new Date(today).addDays(1);
+
+			let tod_data = _.findWhere(city.cal, {day: today.getDate().toString()});
+			let tom_data = _.findWhere(city.cal, {day: tomorrow.getDate().toString()});
 			calendar = {
 				"city": city.name,
 				"date": tod_data.day,
